@@ -1,0 +1,151 @@
+Here's the combined code with the enemy having a shotgun, the player having an emote button, and all other previously provided functionalities:
+
+```python
+import pygame
+import sys
+
+class Shotgun:
+    def __init__(self, ammo_capacity=8, damage=50):
+        self.ammo_capacity = ammo_capacity
+        self.ammo_count = ammo_capacity
+        self.damage = damage
+
+    def shoot(self):
+        if self.ammo_count > 0:
+            print(f"Boom! Shotgun deals {self.damage} damage.")
+            self.ammo_count -= 1
+        else:
+            print("Click! Shotgun is out of ammo. Reload!")
+
+    def reload(self):
+        print("Reloading shotgun...")
+
+class Enemy:
+    def __init__(self, name, health):
+        self.name = name
+        self.health = health
+        self.shotgun = Shotgun()
+
+class Friend:
+    def __init__(self, name):
+        self.name = name
+
+class Car:
+    def __init__(self, model):
+        self.model = model
+        self.speed = 0
+
+    def accelerate(self, speed):
+        self.speed += speed
+        print(f"Accelerating to {self.speed} km/h")
+
+    def brake(self):
+        self.speed = max(0, self.speed - 10)
+        print(f"Braking to {self.speed} km/h")
+
+    def jump(self):
+        print(f"{self.model} jumping!")
+
+class ArmedCar(Car):
+    def __init__(self, model, weapon):
+        super().__init__(model)
+        self.weapon = weapon
+
+    def shoot(self):
+        print(f"Shooting {self.weapon} while driving!")
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+        self.car = ArmedCar(model="Speedster", weapon="Basic Gun")
+
+# Gun class
+class Gun:
+    def __init__(self, name, ammo_capacity, damage):
+        self.name = name
+        self.ammo_capacity = ammo_capacity
+        self.ammo_count = ammo_capacity
+        self.damage = damage
+
+    def shoot(self):
+        if self.ammo_count > 0:
+            print(f"Bang! {self.name} deals {self.damage} damage.")
+            self.ammo_count -= 1
+        else:
+            print(f"Click! {self.name} is out of ammo.")
+
+    def reload(self):
+        print(f"Reloading {self.name}...")
+
+# AK-47 class
+class AK47:
+    def __init__(self, ammo_capacity=30, damage=30):
+        self.ammo_capacity = ammo_capacity
+        self.ammo_count = ammo_capacity
+        self.damage = damage
+
+    def shoot(self):
+        if self.ammo_count > 0:
+            print(f"Ratatatat! AK-47 deals {self.damage} damage.")
+            self.ammo_count -= 1
+        else:
+            print("Click! AK-47 is out of ammo. Reload!")
+
+    def reload(self):
+        print("Reloading AK-47...")
+
+# Walking and Crouching with Pygame and Emote Button
+pygame.init()
+
+# Set up display
+width, height = 800, 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Game with Emote Button")
+
+# Set up colors
+white = (255, 255, 255)
+black = (0, 0, 0)
+
+# Set up player
+player_size = 50
+player_x, player_y = width // 2, height // 2
+crouching = False
+
+# Set up emote
+emote_font = pygame.font.Font(None, 36)
+current_emote = ""
+
+# Set up enemy with shotgun
+enemy = Enemy(name="Evil Guy", health=100)
+
+# Game loop
+clock = pygame.time.Clock()
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                current_emote = "😊"  # You can replace this with the emote of your choice
+            elif event.key == pygame.K_s:
+                enemy.shotgun.shoot()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        player_y -= 5
+    if keys[pygame.K_c]:
+        crouching = not crouching
+        if crouching:
+            player_size //= 2  # Shrink the player when crouching
+        else:
+            player_size *= 2  # Restore player size when standing up
+
+    # Ensure player stays within the screen boundaries
+    player_x = max(0, min(player_x, width - player_size))
+    player_y = max(0, min(player_y, height - player_size))
+
+    screen.fill(white)
+    pygame.draw.rect(screen, black, (player_x, player_y, player
